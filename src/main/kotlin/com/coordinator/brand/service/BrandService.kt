@@ -41,4 +41,6 @@ class BrandService(
             ?.also(brandRepository::delete)
             ?: throw EntityNotFoundException("$brandId: 해당 브랜드를 찾을 수 없습니다.")
     }
+
+    fun existsById(brandId: Long) = brandRepository.existsById(brandId)
 }
