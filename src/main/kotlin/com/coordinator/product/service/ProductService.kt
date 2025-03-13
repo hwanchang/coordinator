@@ -6,6 +6,7 @@ import com.coordinator.product.domain.Product
 import com.coordinator.product.domain.data.lowestpricesbybrand.LowestPricesByBrand
 import com.coordinator.product.domain.data.lowestpricesbycategory.LowestPrices
 import com.coordinator.product.domain.data.lowestpricesbycategory.LowestPricesByCategory
+import com.coordinator.product.domain.data.minmaxprices.MinMaxPrices
 import com.coordinator.product.repository.ProductRepository
 import jakarta.persistence.EntityNotFoundException
 import java.math.BigDecimal
@@ -82,5 +83,27 @@ class ProductService(
 
             LowestPricesByBrand(brand = brand, products = products)
         }.minBy(LowestPricesByBrand::totalPrice)
+    }
+
+    @Transactional(readOnly = true)
+    fun getMinPriceAndMaxPriceByCategory(category: Category): MinMaxPrices {
+        /*
+        동일 최저가 혹은 동일 최고가가 있다면 응답에 List 로 전달해야하기 때문에 최저가, 최고가를 미리 조회하여 해당 가격으로 데이터 조회 필요
+        최저가, 최고가 조회에는 MIN(price), MAX(price) 를 활용하여 한 번의 쿼리로 보내는게 가장 효율적이기 때문에 해당 쿼리 적용
+        */
+        val (minPrice, maxPrice) = productRepository.findMinMaxPriceByCategory(category = category)
+
+        return MinMaxPrices(
+            category = category,
+            minPrice = getPriceByCategory(category = category, price = minPrice),
+            maxPrice = getPriceByCategory(category = category, price = maxPrice),
+        )
+    }
+
+    private fun getPriceByCategory(category: Category, price: BigDecimal): LowestPrices {
+        val brands = productRepository.findAllByCategoryAndPrice(category = category, price = price)
+            .map { brandService.getBrand(it.brandId) }
+
+        return LowestPrices(brands = brands, category = category, price = price)
     }
 }
