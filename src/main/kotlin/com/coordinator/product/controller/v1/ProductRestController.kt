@@ -1,6 +1,7 @@
 package com.coordinator.product.controller.v1
 
 import com.coordinator.product.controller.v1.data.CreateProductRequest
+import com.coordinator.product.controller.v1.data.LowestPricesByCategoryResponse
 import com.coordinator.product.controller.v1.data.ProductResponse
 import com.coordinator.product.controller.v1.data.UpdateProductPriceRequest
 import com.coordinator.product.service.ProductService
@@ -48,4 +49,8 @@ class ProductRestController(
     fun deleteProduct(@PathVariable productId: Long) {
         productService.deleteProduct(productId = productId)
     }
+
+    @GetMapping("lowest-price-by-categories")
+    fun getLowestPricesByCategory(): LowestPricesByCategoryResponse =
+        productService.getLowestPricesByCategory().let(::LowestPricesByCategoryResponse)
 }

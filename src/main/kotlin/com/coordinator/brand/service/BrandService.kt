@@ -43,4 +43,6 @@ class BrandService(
     }
 
     fun existsById(brandId: Long) = brandRepository.existsById(brandId)
+
+    fun getAllBrandsByIds(brandIds: List<Long>) = brandRepository.findAllByIdIn(brandIds)
 }

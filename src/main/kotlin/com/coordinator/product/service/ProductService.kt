@@ -1,7 +1,10 @@
 package com.coordinator.product.service
 
 import com.coordinator.brand.service.BrandService
+import com.coordinator.product.domain.Category
 import com.coordinator.product.domain.Product
+import com.coordinator.product.domain.data.lowestpricesbycategory.LowestPrices
+import com.coordinator.product.domain.data.lowestpricesbycategory.LowestPricesByCategory
 import com.coordinator.product.repository.ProductRepository
 import jakarta.persistence.EntityNotFoundException
 import java.math.BigDecimal
@@ -43,5 +46,23 @@ class ProductService(
         productRepository.findByIdOrNull(id = productId)
             ?.also(productRepository::delete)
             ?: throw EntityNotFoundException("productId - $productId: 해당 상품을 찾을 수 없습니다.")
+    }
+
+    @Transactional(readOnly = true)
+    fun getLowestPricesByCategory(): LowestPricesByCategory {
+        return Category.entries
+            .map { category ->
+                val minPrice = productRepository.findMinPriceByCategory(category = category)
+                    ?: throw EntityNotFoundException("category - $category: 해당 상품을 찾을 수 없습니다.")
+                val products = productRepository.findAllByCategoryAndPrice(category = category, price = minPrice)
+
+                check(products.isNotEmpty()) { "상품은 최소 1개는 존재해야합니다." }
+
+                val brandIds = products.map(Product::brandId).distinct()
+                val brands = brandService.getAllBrandsByIds(brandIds)
+
+                LowestPrices(brands = brands, category = category, price = minPrice)
+            }
+            .let(::LowestPricesByCategory)
     }
 }

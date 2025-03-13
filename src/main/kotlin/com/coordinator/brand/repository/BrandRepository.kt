@@ -9,4 +9,6 @@ interface BrandRepository : JpaRepository<Brand, Long> {
     override fun findAll(): List<Brand>
 
     fun existsByName(name: String): Boolean
+
+    fun findAllByIdIn(ids: List<Long>): List<Brand>
 }
