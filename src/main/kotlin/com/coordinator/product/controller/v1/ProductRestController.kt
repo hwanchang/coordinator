@@ -1,6 +1,7 @@
 package com.coordinator.product.controller.v1
 
 import com.coordinator.product.controller.v1.data.CreateProductRequest
+import com.coordinator.product.controller.v1.data.LowestPricesByBrandResponse
 import com.coordinator.product.controller.v1.data.LowestPricesByCategoryResponse
 import com.coordinator.product.controller.v1.data.ProductResponse
 import com.coordinator.product.controller.v1.data.UpdateProductPriceRequest
@@ -53,4 +54,8 @@ class ProductRestController(
     @GetMapping("lowest-price-by-categories")
     fun getLowestPricesByCategory(): LowestPricesByCategoryResponse =
         productService.getLowestPricesByCategory().let(::LowestPricesByCategoryResponse)
+
+    @GetMapping("lowest-price-by-brands")
+    fun getLowestPricesByBrand(): LowestPricesByBrandResponse =
+        productService.getLowestPricesByBrand().let(::LowestPricesByBrandResponse)
 }

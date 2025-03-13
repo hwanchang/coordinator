@@ -13,6 +13,8 @@ interface ProductRepository : JpaRepository<Product, Long> {
 
     fun findAllByCategoryAndPrice(category: Category, price: BigDecimal): List<Product>
 
+    fun findFirstByBrandIdAndCategoryOrderByPriceAsc(brandId: Long, category: Category): Product?
+
     @Query("SELECT MIN(p.price) AS minPrice FROM Product p WHERE p.category = :category")
     fun findMinPriceByCategory(category: Category): BigDecimal?
 }
