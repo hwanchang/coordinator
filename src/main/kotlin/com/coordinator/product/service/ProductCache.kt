@@ -7,20 +7,30 @@ import com.coordinator.product.domain.Product
 import com.coordinator.product.domain.data.lowestpricesbybrand.LowestPricesByBrand
 import com.coordinator.product.domain.data.lowestpricesbycategory.LowestPrices
 import com.coordinator.product.domain.data.minmaxprices.MinMaxPrice
-import com.coordinator.product.repository.cache.LowestPriceByBrandCacheRepository
-import com.coordinator.product.repository.cache.LowestPriceByCategoryCacheRepository
-import com.coordinator.product.repository.cache.MinMaxPriceByCategoryCacheRepository
+import com.coordinator.product.repository.cache.LowestPricesByBrandCacheRepository
+import com.coordinator.product.repository.cache.LowestPricesByCategoryCacheRepository
+import com.coordinator.product.repository.cache.MinMaxPricesByCategoryCacheRepository
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 
 @Service
 class ProductCache(
     private val brandService: BrandService,
 
-    private val lowestPriceByCategoryCacheRepository: LowestPriceByCategoryCacheRepository,
+    private val lowestPricesByCategoryCacheRepository: LowestPricesByCategoryCacheRepository,
 
-    private val lowestPriceByBrandCacheRepository: LowestPriceByBrandCacheRepository,
+    @Value("\${cache.key.lowest-prices-by-category}")
+    private val lowestPricesByCategoryKey: String,
 
-    private val minMaxPriceByCategoryCacheRepository: MinMaxPriceByCategoryCacheRepository,
+    private val lowestPricesByBrandCacheRepository: LowestPricesByBrandCacheRepository,
+
+    @Value("\${cache.key.lowest-prices-by-brand}")
+    private val lowestPricesByBrandKey: String,
+
+    private val minMaxPricesByCategoryCacheRepository: MinMaxPricesByCategoryCacheRepository,
+
+    @Value("\${cache.key.min-max-prices-by-category}")
+    private val minMaxPricesByCategoryKey: String,
 ) {
     fun updateCache(product: Product) {
         val brand = brandService.getBrand(brandId = product.brandId)
@@ -103,7 +113,9 @@ class ProductCache(
 
         val brandNames = lowestPrices.brandNames
         if (brandNames.contains(brand.name)) {
-            lowestPriceByCategoryCacheRepository.remove(key = category)
+            val key = "$lowestPricesByCategoryKey:$category"
+
+            lowestPricesByCategoryCacheRepository.remove(key = key)
         }
     }
 
@@ -113,7 +125,9 @@ class ProductCache(
         val lowestPricesByBrand = getLowestPriceByBrandCache(brandName) ?: return
 
         if (lowestPricesByBrand.brandName == brandName) {
-            lowestPriceByBrandCacheRepository.remove(key = brandName)
+            val key = "$lowestPricesByBrandKey:$brandName"
+
+            lowestPricesByBrandCacheRepository.remove(key = key)
         }
     }
 
@@ -123,31 +137,45 @@ class ProductCache(
         val (minPrice, maxPrice) = getMinMaxPriceByCategoryCache(category) ?: return
 
         if (minPrice == product.price || maxPrice == product.price) {
-            minMaxPriceByCategoryCacheRepository.remove(key = category)
+            val key = "$minMaxPricesByCategoryKey:$category"
+
+            minMaxPricesByCategoryCacheRepository.remove(key = key)
         }
     }
 
     fun saveLowestPriceByCategoryCache(lowestPrices: LowestPrices) {
-        lowestPriceByCategoryCacheRepository.save(key = lowestPrices.category, value = lowestPrices)
+        val key = "$lowestPricesByCategoryKey:${lowestPrices.category}"
+
+        lowestPricesByCategoryCacheRepository.save(key = key, value = lowestPrices)
     }
 
     fun saveLowestPriceByBrandCache(lowestPricesByBrand: LowestPricesByBrand) {
-        lowestPriceByBrandCacheRepository.save(key = lowestPricesByBrand.brandName, value = lowestPricesByBrand)
+        val key = "$lowestPricesByBrandKey:${lowestPricesByBrand.brandName}"
+
+        lowestPricesByBrandCacheRepository.save(key = key, value = lowestPricesByBrand)
     }
 
     fun saveMinMaxPriceByCategoryCache(category: Category, minMaxPrice: MinMaxPrice) {
-        minMaxPriceByCategoryCacheRepository.save(key = category, value = minMaxPrice)
+        val key = "$minMaxPricesByCategoryKey:$category"
+
+        minMaxPricesByCategoryCacheRepository.save(key = key, value = minMaxPrice)
     }
 
     fun getLowestPriceByCategoryCache(category: Category): LowestPrices? {
-        return lowestPriceByCategoryCacheRepository.getOrNull(key = category)
+        val key = "$lowestPricesByCategoryKey:$category"
+
+        return lowestPricesByCategoryCacheRepository.getOrNull(key = key)
     }
 
     fun getLowestPriceByBrandCache(brandName: String): LowestPricesByBrand? {
-        return lowestPriceByBrandCacheRepository.getOrNull(key = brandName)
+        val key = "$lowestPricesByBrandKey:$brandName"
+
+        return lowestPricesByBrandCacheRepository.getOrNull(key = key)
     }
 
     fun getMinMaxPriceByCategoryCache(category: Category): MinMaxPrice? {
-        return minMaxPriceByCategoryCacheRepository.getOrNull(key = category)
+        val key = "$minMaxPricesByCategoryKey:$category"
+
+        return minMaxPricesByCategoryCacheRepository.getOrNull(key = key)
     }
 }

@@ -5,18 +5,18 @@ import com.coordinator.product.domain.data.lowestpricesbybrand.LowestPricesByBra
 import org.springframework.stereotype.Repository
 
 @Repository
-class LowestPriceByBrandCacheRepository(
+class LowestPricesByBrandCacheRepository(
     private val cache: Cache<String, LowestPricesByBrand>,
 ) {
     fun save(key: String, value: LowestPricesByBrand) {
-        cache.put("lowest-price-by-brand:$key", value)
+        cache.put(key, value)
     }
 
     fun getOrNull(key: String): LowestPricesByBrand? {
-        return cache.getOrNull("lowest-price-by-brand:$key")
+        return cache.getOrNull(key)
     }
 
     fun remove(key: String) {
-        cache.remove("lowest-price-by-brand:$key")
+        cache.remove(key)
     }
 }
