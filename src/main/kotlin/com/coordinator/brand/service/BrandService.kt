@@ -28,6 +28,8 @@ class BrandService(
 
     @Transactional
     fun updateBrand(brandId: Long, name: String) {
+        check(!brandRepository.existsByName(name)) { "$name: 이미 존재하는 브랜드 명으로 수정할 수 없습니다." }
+
         val brand = brandRepository.findByIdOrNull(id = brandId)
             ?.apply { update(name = name) }
             ?: throw EntityNotFoundException("$brandId: 해당 브랜드를 찾을 수 없습니다.")
