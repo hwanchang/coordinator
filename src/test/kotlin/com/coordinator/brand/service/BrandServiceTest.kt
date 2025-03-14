@@ -4,8 +4,6 @@ import com.coordinator.brand.domain.Brand
 import com.coordinator.brand.repository.BrandRepository
 import io.kotest.assertions.throwables.shouldThrow
 import io.kotest.core.spec.style.BehaviorSpec
-import io.kotest.matchers.booleans.shouldBeFalse
-import io.kotest.matchers.booleans.shouldBeTrue
 import io.kotest.matchers.collections.shouldContainExactly
 import io.kotest.matchers.nulls.shouldNotBeNull
 import io.kotest.matchers.shouldBe
@@ -16,8 +14,11 @@ import io.mockk.mockk
 import io.mockk.spyk
 import io.mockk.verify
 import jakarta.persistence.EntityNotFoundException
+import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS
 import org.springframework.data.repository.findByIdOrNull
 
+@TestInstance(PER_CLASS)
 class BrandServiceTest : BehaviorSpec({
     val brandRepository: BrandRepository = mockk()
     val brandService = BrandService(brandRepository)
@@ -87,7 +88,8 @@ class BrandServiceTest : BehaviorSpec({
     Given("브랜드를 업데이트할 때") {
         val brand = spyk(Brand(id = 1L, name = "NewBalance"))
 
-        When("브랜드 이름을 변경하면") {
+        When("브랜드 명을 변경하면") {
+            every { brandRepository.existsByName(any<String>()) } returns false
             every { brandRepository.findByIdOrNull(1L) } returns brand
             every { brandRepository.save(any<Brand>()) } returns brand
 
@@ -97,6 +99,16 @@ class BrandServiceTest : BehaviorSpec({
                 verify { brandRepository.findByIdOrNull(1L) }
                 verify { brand.update("Vans") }
                 verify { brandRepository.save(brand) }
+            }
+        }
+
+        When("이미 존재하는 브랜드 명으로 변경하면") {
+            every { brandRepository.existsByName(any<String>()) } returns true
+
+            Then("예외가 발생해야 한다.") {
+                shouldThrow<IllegalStateException> {
+                    brandService.updateBrand(1L, "Vans")
+                }.message shouldBe "Vans: 이미 존재하는 브랜드 명으로 수정할 수 없습니다."
             }
         }
     }
@@ -131,7 +143,7 @@ class BrandServiceTest : BehaviorSpec({
             every { brandRepository.existsById(1L) } returns true
 
             Then("true를 반환해야 한다.") {
-                brandService.existsById(1L).shouldBeTrue()
+                brandService.existsById(1L) shouldBe true
             }
         }
 
@@ -139,7 +151,7 @@ class BrandServiceTest : BehaviorSpec({
             every { brandRepository.existsById(2L) } returns false
 
             Then("false를 반환해야 한다.") {
-                brandService.existsById(2L).shouldBeFalse()
+                brandService.existsById(2L) shouldBe false
             }
         }
     }

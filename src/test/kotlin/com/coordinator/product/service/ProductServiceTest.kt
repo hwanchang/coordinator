@@ -21,8 +21,11 @@ import io.mockk.spyk
 import io.mockk.verify
 import jakarta.persistence.EntityNotFoundException
 import java.math.BigDecimal
+import org.junit.jupiter.api.TestInstance
+import org.junit.jupiter.api.TestInstance.Lifecycle.PER_CLASS
 import org.springframework.data.repository.findByIdOrNull
 
+@TestInstance(PER_CLASS)
 class ProductServiceTest : BehaviorSpec({
     val brandService: BrandService = mockk()
     val productRepository: ProductRepository = mockk()
@@ -371,10 +374,10 @@ class ProductServiceTest : BehaviorSpec({
             every { brandService.getAllBrandsByIds(listOf(2L)) } returns listOf(Brand(id = 2L, name = "Adidas"))
             justRun { productCache.saveMinMaxPriceByCategoryCache(any<Category>(), any<MinMaxPrice>()) }
 
-            val foundminMaxPrices = productService.getMinPriceAndMaxPriceByCategory(category)
+            val foundMinMaxPrices = productService.getMinPriceAndMaxPriceByCategory(category)
 
             Then("DB 조회 후 캐시에 저장하고 최저가, 최고가 정보를 반환해야 한다.") {
-                foundminMaxPrices shouldBe minMaxPrices
+                foundMinMaxPrices shouldBe minMaxPrices
                 verify { productCache.saveMinMaxPriceByCategoryCache(any<Category>(), any<MinMaxPrice>()) }
             }
         }

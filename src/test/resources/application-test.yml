@@ -1,0 +1,33 @@
+spring:
+  application:
+    name: coordinator
+  datasource:
+    driver-class-name: org.h2.Driver
+    url: jdbc:h2:mem:coordinator;DB_CLOSE_DELAY=-1;MODE=MySQL
+    username: sa
+    password:
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    url: jdbc:h2:mem:coordinator;DB_CLOSE_DELAY=-1;MODE=MySQL
+    user: sa
+    password:
+    cleanDisabled: false
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    open-in-view: false
+    show-sql: true
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        globally_quoted_identifiers: true
+        show_sql: true
+        format_sql: true
+        use_sql_comments: true
+
+cache:
+  key:
+    lowest-prices-by-category: lowest-prices-by-category
+    lowest-prices-by-brand: lowest-prices-by-brand
+    min-max-prices-by-category: min-max-prices-by-category
