@@ -1,5 +1,6 @@
 package com.coordinator.common.exception
 
+import com.coordinator.common.api.ApiResponse.Failure
 import jakarta.persistence.EntityNotFoundException
 import org.springframework.beans.TypeMismatchException
 import org.springframework.http.HttpStatus
@@ -25,7 +26,7 @@ class GlobalExceptionHandler {
     * 또한, 에러메시지에는 어떤 요청 값이 어떤 문제인지 설명 추가
     * */
     private fun response(errorMessage: String?, httpStatus: HttpStatus): ResponseEntity<*> {
-        return ResponseEntity(ErrorResponse(errorMessage), httpStatus)
+        return ResponseEntity(Failure<Unit>(errorMessage = errorMessage ?: "에러가 발생했습니다."), httpStatus)
     }
 
     @ExceptionHandler(
