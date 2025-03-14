@@ -19,13 +19,13 @@ class MinPriceAndMaxPriceResponse(minMaxPrices: MinMaxPrices) {
 
     init {
         val minPricePrice = minMaxPrices.minPrice
-        val minBrands = minPricePrice.brands
+        val minBrandNames = minPricePrice.brandNames
 
         val maxPricePrice = minMaxPrices.maxPrice
-        val maxBrands = maxPricePrice.brands
+        val maxBrandNames = maxPricePrice.brandNames
 
-        minPricePrices = minBrands.map { PricePriceResponse(brandName = it.name, price = minPricePrice.price) }
-        maxPricePrices = maxBrands.map { PricePriceResponse(brandName = it.name, price = maxPricePrice.price) }
+        minPricePrices = minBrandNames.map { PricePriceResponse(brandName = it, price = minPricePrice.price) }
+        maxPricePrices = maxBrandNames.map { PricePriceResponse(brandName = it, price = maxPricePrice.price) }
     }
 
     class PricePriceResponse(

@@ -105,9 +105,11 @@ class ProductService(
     }
 
     private fun getPriceByCategory(category: Category, price: BigDecimal): LowestPrices {
-        val brands = productRepository.findAllByCategoryAndPrice(category = category, price = price)
-            .map { brandService.getBrand(it.brandId) }
+        val brandIds = productRepository.findAllByCategoryAndPrice(category = category, price = price)
+            .map(Product::brandId)
+        val brandNames = brandService.getAllBrandsByIds(brandIds = brandIds)
+            .map(Brand::name)
 
-        return LowestPrices(brands = brands, category = category, price = price)
+        return LowestPrices(brandNames = brandNames, category = category, price = price)
     }
 }
