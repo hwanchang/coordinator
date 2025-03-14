@@ -21,11 +21,16 @@ import org.springframework.web.multipart.MultipartException
 @RestControllerAdvice
 class GlobalExceptionHandler {
     /*
-    * [실패 시 실패 값과 실패 사유에 대한 해석]
-    * 실패 값은 HTTP Status 로 표현한다고 생각하여 ResponseBody 에는 에러 메시지만 표시하고 요청 실패에 대한 HTTP 상태 코드를 적절히 부여
-    * 또한, 에러메시지에는 어떤 요청 값이 어떤 문제인지 설명 추가
-    * */
+    [실패 시 실패 값과 실패 사유에 대한 해석]
+    실패 값은 HTTP Status 로 표현한다고 생각하여 ResponseBody 에는 에러 메시지만 표시하고 요청 실패에 대한 HTTP 상태 코드를 적절히 부여
+    또한, 에러메시지에는 어떤 요청 값이 어떤 문제인지 설명 추가
+    */
     private fun response(errorMessage: String?, httpStatus: HttpStatus): ResponseEntity<*> {
+        /*
+        errorMessage 가 null 일 경우를 대비하여 기본 값 설정
+        errorMessage 로 stack trace 를 활용할 수도 있지만 그대로 클라이언트로 내려보내면 서버 구조 노출 위험이 있어 지양
+        기본 값으로 설정을 하면 에러를 확인하기 어렵지만 실제 서버 구성 시에는 로그에 stack trace 를 남겨 에러 추적 가능
+        */
         return ResponseEntity(Failure<Unit>(errorMessage = errorMessage ?: "에러가 발생했습니다."), httpStatus)
     }
 
