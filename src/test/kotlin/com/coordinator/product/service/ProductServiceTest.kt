@@ -216,6 +216,25 @@ class ProductServiceTest : BehaviorSpec({
                 verify { productCache.saveLowestPriceByCategoryCache(any<LowestPrices>()) }
             }
         }
+
+        When("캐시에 데이터가 없고, 카테고리에 상품이 없으면") {
+            val products = Category.entries.mapIndexed { index, category ->
+                Product(
+                    brandId = index + 1L,
+                    name = "product: $category",
+                    category = category,
+                    price = BigDecimal(100),
+                )
+            }
+            every { productCache.getLowestPriceByCategoryCache(any<Category>()) } returns null
+            every { productRepository.findMinPriceByCategory(any<Category>()) } returns null
+
+            Then("예외가 발생해야 한다.") {
+                shouldThrow<EntityNotFoundException> {
+                    productService.getLowestPricesByCategory()
+                }.message shouldBe "category - ${Category.entries.first()}: 해당 상품을 찾을 수 없습니다."
+            }
+        }
     }
 
     Given("브랜드별 최저가 상품을 조회할 때") {
@@ -288,6 +307,23 @@ class ProductServiceTest : BehaviorSpec({
                     verify { productRepository.findFirstByBrandIdAndCategoryOrderByPriceAsc(2L, category) }
                 }
                 verify { productCache.saveLowestPriceByBrandCache(any<LowestPricesByBrand>()) }
+            }
+        }
+
+        When("캐시에 데이터가 없고, 브랜드에 해당 카테고리의 상품이 없으면") {
+            every { brandService.getBrands() } returns brands
+            every { productCache.getLowestPriceByBrandCache(any<String>()) } returns null
+            Category.entries.forEach { category ->
+                every { productRepository.findFirstByBrandIdAndCategoryOrderByPriceAsc(1L, category) } returns null
+                every { productRepository.findFirstByBrandIdAndCategoryOrderByPriceAsc(2L, category) } returns Product(
+                    brandId = 2L, name = "Adidas: product: $category", category = category, price = BigDecimal(110)
+                )
+            }
+
+            Then("예외가 발생해야 한다.") {
+                shouldThrow<EntityNotFoundException> {
+                    productService.getLowestPricesByBrand()
+                }.message shouldBe "brandId - 1, category - ${Category.entries.first()}: 해당 상품을 찾을 수 없습니다."
             }
         }
     }
