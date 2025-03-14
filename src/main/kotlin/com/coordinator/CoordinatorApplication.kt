@@ -4,8 +4,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 
 @SpringBootApplication
-class MusinsaCoordinatorApplication
+class CoordinatorApplication
 
 fun main(args: Array<String>) {
-    runApplication<MusinsaCoordinatorApplication>(*args)
+    runApplication<CoordinatorApplication>(*args)
 }
