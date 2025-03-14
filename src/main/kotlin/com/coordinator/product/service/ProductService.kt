@@ -57,8 +57,8 @@ class ProductService(
         check(productCount > 1) { "상품이 한 개인 경우는 삭제할 수 없습니다." } // 상품 품절은 없다고 가정
 
         productRepository.delete(product)
+            .also { productCache.deleteCache(product) }
 
-        productCache.deleteCache(product)
     }
 
     @Transactional(readOnly = true)
