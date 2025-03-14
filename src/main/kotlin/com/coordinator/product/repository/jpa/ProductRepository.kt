@@ -1,4 +1,4 @@
-package com.coordinator.product.repository
+package com.coordinator.product.repository.jpa
 
 import com.coordinator.product.domain.Category
 import com.coordinator.product.domain.Product
@@ -15,6 +15,8 @@ interface ProductRepository : JpaRepository<Product, Long> {
     fun findAllByCategoryAndPrice(category: Category, price: BigDecimal): List<Product>
 
     fun findFirstByBrandIdAndCategoryOrderByPriceAsc(brandId: Long, category: Category): Product?
+
+    fun countByBrandIdAndCategory(brandId: Long, category: Category): Int
 
     @Query("SELECT MIN(p.price) AS minPrice FROM Product p WHERE p.category = :category")
     fun findMinPriceByCategory(category: Category): BigDecimal?

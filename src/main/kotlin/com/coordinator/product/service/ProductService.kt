@@ -7,7 +7,7 @@ import com.coordinator.product.domain.data.lowestpricesbybrand.LowestPricesByBra
 import com.coordinator.product.domain.data.lowestpricesbycategory.LowestPrices
 import com.coordinator.product.domain.data.lowestpricesbycategory.LowestPricesByCategory
 import com.coordinator.product.domain.data.minmaxprices.MinMaxPrices
-import com.coordinator.product.repository.ProductRepository
+import com.coordinator.product.repository.jpa.ProductRepository
 import jakarta.persistence.EntityNotFoundException
 import java.math.BigDecimal
 import org.springframework.data.repository.findByIdOrNull
@@ -45,9 +45,13 @@ class ProductService(
 
     @Transactional
     fun deleteProduct(productId: Long) {
-        productRepository.findByIdOrNull(id = productId)
-            ?.also(productRepository::delete)
+        val product = productRepository.findByIdOrNull(id = productId)
             ?: throw EntityNotFoundException("productId - $productId: 해당 상품을 찾을 수 없습니다.")
+
+        val productCount = productRepository.countByBrandIdAndCategory(product.brandId, product.category)
+        check(productCount > 1) { "상품이 한 개인 경우는 삭제할 수 없습니다." } // 상품 품절은 없다고 가정
+
+        productRepository.delete(product)
     }
 
     @Transactional(readOnly = true)
