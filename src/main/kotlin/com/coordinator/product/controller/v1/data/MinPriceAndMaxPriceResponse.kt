@@ -7,28 +7,17 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import java.math.BigDecimal
 
-class MinPriceAndMaxPriceResponse(minMaxPrices: MinMaxPrices) {
+data class MinPriceAndMaxPriceResponse(
     @JsonProperty("카테고리")
-    val category: Category = minMaxPrices.category
+    val category: Category,
 
     @JsonProperty("최저가")
-    val minPricePrices: List<PricePriceResponse>
+    val minPricePrices: List<PricePriceResponse>,
 
     @JsonProperty("최고가")
-    val maxPricePrices: List<PricePriceResponse>
-
-    init {
-        val minPricePrice = minMaxPrices.minPrice
-        val minBrandNames = minPricePrice.brandNames
-
-        val maxPricePrice = minMaxPrices.maxPrice
-        val maxBrandNames = maxPricePrice.brandNames
-
-        minPricePrices = minBrandNames.map { PricePriceResponse(brandName = it, price = minPricePrice.price) }
-        maxPricePrices = maxBrandNames.map { PricePriceResponse(brandName = it, price = maxPricePrice.price) }
-    }
-
-    class PricePriceResponse(
+    val maxPricePrices: List<PricePriceResponse>,
+) {
+    data class PricePriceResponse(
         @JsonProperty("브랜드")
         val brandName: String,
 
@@ -36,4 +25,20 @@ class MinPriceAndMaxPriceResponse(minMaxPrices: MinMaxPrices) {
         @JsonSerialize(using = BigDecimalPriceSerializer::class)
         val price: BigDecimal,
     )
+
+    companion object {
+        fun from(minMaxPrices: MinMaxPrices): MinPriceAndMaxPriceResponse {
+            val minPricePrice = minMaxPrices.minPrice
+            val minBrandNames = minPricePrice.brandNames
+
+            val maxPricePrice = minMaxPrices.maxPrice
+            val maxBrandNames = maxPricePrice.brandNames
+
+            return MinPriceAndMaxPriceResponse(
+                category = minMaxPrices.category,
+                minPricePrices = minBrandNames.map { PricePriceResponse(brandName = it, price = minPricePrice.price) },
+                maxPricePrices = maxBrandNames.map { PricePriceResponse(brandName = it, price = maxPricePrice.price) },
+            )
+        }
+    }
 }

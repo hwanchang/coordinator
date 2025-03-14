@@ -29,13 +29,13 @@ class BrandRestController(
 
     @GetMapping
     fun getBrands(): ApiResponse<List<BrandResponse>> =
-        brandService.getBrands().map(::BrandResponse).let { Success(result = it) }
+        brandService.getBrands().map(BrandResponse::from).let { Success(result = it) }
 
     @GetMapping("{brandId}")
     fun getBrand(@PathVariable brandId: Long): ApiResponse<BrandResponse> {
         val brand = brandService.getBrand(brandId = brandId)
 
-        return Success(result = BrandResponse(brand = brand))
+        return Success(result = BrandResponse.from(brand = brand))
     }
 
     @PatchMapping("{brandId}")

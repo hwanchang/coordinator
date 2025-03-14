@@ -3,12 +3,21 @@ package com.coordinator.brand.controller.v1.data
 import com.coordinator.brand.domain.Brand
 import java.time.LocalDateTime
 
-class BrandResponse(brand: Brand) {
-    val id: Long = brand.id
+data class BrandResponse(
+    val id: Long,
 
-    val name: String = brand.name
+    val name: String,
 
-    val createdAt: LocalDateTime = brand.createdAt
+    val createdAt: LocalDateTime,
 
-    val updatedAt: LocalDateTime? = brand.updatedAt
+    val updatedAt: LocalDateTime?,
+) {
+    companion object {
+        fun from(brand: Brand) = BrandResponse(
+            id = brand.id,
+            name = brand.name,
+            createdAt = brand.createdAt,
+            updatedAt = brand.updatedAt,
+        )
+    }
 }

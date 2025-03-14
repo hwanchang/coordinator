@@ -34,13 +34,13 @@ class ProductRestController(
 
     @GetMapping
     fun getProducts(): ApiResponse<List<ProductResponse>> =
-        productService.getProducts().map(::ProductResponse).let { Success(result = it) }
+        productService.getProducts().map(ProductResponse::from).let { Success(result = it) }
 
     @GetMapping("{productId}")
     fun getProduct(@PathVariable productId: Long): ApiResponse<ProductResponse> {
         val product = productService.getProduct(productId = productId)
 
-        return Success(result = ProductResponse(product = product))
+        return Success(result = ProductResponse.from(product = product))
     }
 
     @PatchMapping("{productId}")
@@ -64,20 +64,20 @@ class ProductRestController(
     fun getLowestPricesByCategory(): ApiResponse<LowestPricesByCategoryResponse> {
         val lowestPricesByCategory = productService.getLowestPricesByCategory()
 
-        return Success(result = LowestPricesByCategoryResponse(lowestPricesByCategory = lowestPricesByCategory))
+        return Success(result = LowestPricesByCategoryResponse.from(lowestPricesByCategory = lowestPricesByCategory))
     }
 
     @GetMapping("lowest-price-by-brands")
     fun getLowestPricesByBrand(): ApiResponse<LowestPricesByBrandResponse> {
         val lowestPricesByBrand = productService.getLowestPricesByBrand()
 
-        return Success(result = LowestPricesByBrandResponse(lowestPricesByBrand = lowestPricesByBrand))
+        return Success(result = LowestPricesByBrandResponse.from(lowestPricesByBrand = lowestPricesByBrand))
     }
 
     @GetMapping("min-max-prices")
     fun getMinPriceAndMaxPriceByCategory(@RequestParam category: Category): ApiResponse<MinPriceAndMaxPriceResponse> {
         val minMaxPrices = productService.getMinPriceAndMaxPriceByCategory(category = category)
 
-        return Success(result = MinPriceAndMaxPriceResponse(minMaxPrices = minMaxPrices))
+        return Success(result = MinPriceAndMaxPriceResponse.from(minMaxPrices = minMaxPrices))
     }
 }

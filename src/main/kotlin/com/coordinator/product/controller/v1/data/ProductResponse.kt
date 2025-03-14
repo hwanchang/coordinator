@@ -5,16 +5,27 @@ import com.coordinator.product.domain.Product
 import java.math.BigDecimal
 import java.time.LocalDateTime
 
-class ProductResponse(product: Product) {
-    val id: Long = product.id
+data class ProductResponse(
+    val id: Long,
 
-    val brandId: Long = product.brandId
+    val brandId: Long,
 
-    val category: Category = product.category
+    val category: Category,
 
-    val price: BigDecimal = product.price
+    val price: BigDecimal,
 
-    val createdAt: LocalDateTime = product.createdAt
+    val createdAt: LocalDateTime,
 
-    val updatedAt: LocalDateTime? = product.updatedAt
+    val updatedAt: LocalDateTime?,
+) {
+    companion object {
+        fun from(product: Product) = ProductResponse(
+            id = product.id,
+            brandId = product.brandId,
+            category = product.category,
+            price = product.price,
+            createdAt = product.createdAt,
+            updatedAt = product.updatedAt,
+        )
+    }
 }

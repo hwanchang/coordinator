@@ -4,7 +4,7 @@ import com.coordinator.product.domain.Category
 import com.coordinator.product.domain.Product
 import java.math.BigDecimal
 
-class CreateProductRequest(
+data class CreateProductRequest(
     val brandId: Long,
 
     val name: String,
