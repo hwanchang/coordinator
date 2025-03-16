@@ -1,4 +1,4 @@
-package com.coordinator.configuration
+package com.coordinator.configuration.cache
 
 import java.util.concurrent.ConcurrentHashMap
 import org.springframework.stereotype.Component

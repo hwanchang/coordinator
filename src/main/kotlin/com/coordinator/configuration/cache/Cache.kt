@@ -1,4 +1,4 @@
-package com.coordinator.configuration
+package com.coordinator.configuration.cache
 
 interface Cache<K, V> {
     fun put(key: K, value: V)

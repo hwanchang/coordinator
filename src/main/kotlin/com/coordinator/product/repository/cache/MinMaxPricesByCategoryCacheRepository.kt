@@ -1,6 +1,6 @@
 package com.coordinator.product.repository.cache
 
-import com.coordinator.configuration.Cache
+import com.coordinator.configuration.cache.Cache
 import com.coordinator.product.domain.data.minmaxprices.MinMaxPrice
 import org.springframework.stereotype.Repository
 

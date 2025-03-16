@@ -1,4 +1,4 @@
-package com.coordinator.common.exception
+package com.coordinator.configuration.exception
 
 import com.coordinator.common.api.ApiResponse.Failure
 import jakarta.persistence.EntityNotFoundException
