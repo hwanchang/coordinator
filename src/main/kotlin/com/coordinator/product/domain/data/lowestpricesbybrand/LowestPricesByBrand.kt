@@ -12,6 +12,6 @@ data class LowestPricesByBrand(
     val totalPrice: BigDecimal = products.sumOf(Product::price)
 
     init {
-        require(products.size == Category.entries.size) { "상품이 각 카테고리 별로 한 개씩 필요합니다." }
+        require(products.size == Category.entries.size) { "상품이 각 카테고리별로 한 개씩 필요합니다." }
     }
 }

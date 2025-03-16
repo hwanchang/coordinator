@@ -230,7 +230,7 @@ class ProductRestControllerTest(
             }.andReturn().response
             val apiResponse = objectMapper.readValue<Success<ProductResponse>>(response.contentAsString)
 
-            Then("카테고리 별 최저가(LowestPricesByCategory) 캐시가 업데이트 되고, 상품 가격이 정상적으로 변경되어야 한다.") {
+            Then("카테고리별 최저가(LowestPricesByCategory) 캐시가 업데이트 되고, 상품 가격이 정상적으로 변경되어야 한다.") {
                 response.status shouldBe 200
                 apiResponse.isSucceeded shouldBe true
                 apiResponse.result.brandId shouldBe 4
@@ -241,7 +241,7 @@ class ProductRestControllerTest(
             }
         }
 
-        When("카테고리 별 최저가에 해당하는 상품의 가격을 변경하면") {
+        When("카테고리별 최저가에 해당하는 상품의 가격을 변경하면") {
             val request = UpdateProductPriceRequest(
                 price = BigDecimal(6000),
             )
@@ -251,7 +251,7 @@ class ProductRestControllerTest(
             }.andReturn().response
             val apiResponse = objectMapper.readValue<Success<ProductResponse>>(response.contentAsString)
 
-            Then("카테고리 별 최저가, 최고가(MinMaxPricesByCategory)의 최저가 변경으로 캐시가 업데이트 되고, 상품 가격이 정상적으로 변경되어야 한다.") {
+            Then("카테고리별 최저가, 최고가(MinMaxPricesByCategory)의 최저가 변경으로 캐시가 업데이트 되고, 상품 가격이 정상적으로 변경되어야 한다.") {
                 response.status shouldBe 200
                 apiResponse.isSucceeded shouldBe true
                 apiResponse.result.brandId shouldBe 5
@@ -262,7 +262,7 @@ class ProductRestControllerTest(
             }
         }
 
-        When("카테고리 별 최고가에 해당하는 상품의 가격을 변경하면") {
+        When("카테고리별 최고가에 해당하는 상품의 가격을 변경하면") {
             val request = UpdateProductPriceRequest(
                 price = BigDecimal(2100),
             )
@@ -272,7 +272,7 @@ class ProductRestControllerTest(
             }.andReturn().response
             val apiResponse = objectMapper.readValue<Success<ProductResponse>>(response.contentAsString)
 
-            Then("카테고리 별 최저가, 최고가(MinMaxPricesByCategory)의 최고가 변경으로 캐시가 업데이트 되고, 상품 가격이 정상적으로 변경되어야 한다.") {
+            Then("카테고리별 최저가, 최고가(MinMaxPricesByCategory)의 최고가 변경으로 캐시가 업데이트 되고, 상품 가격이 정상적으로 변경되어야 한다.") {
                 response.status shouldBe 200
                 apiResponse.isSucceeded shouldBe true
                 apiResponse.result.brandId shouldBe 1
@@ -328,7 +328,7 @@ class ProductRestControllerTest(
             }
         }
 
-        When("카테고리 별 최저가, 최고가(MinMaxPricesByCategory)의 최고가인 유효한 상품을 삭제하면") {
+        When("카테고리별 최저가, 최고가(MinMaxPricesByCategory)의 최고가인 유효한 상품을 삭제하면") {
             mockMvc.get("/api/v1/products/min-max-prices") { param("category", SOCKS.name) }.andReturn()
             val request = CreateProductRequest(
                 brandId = 9,

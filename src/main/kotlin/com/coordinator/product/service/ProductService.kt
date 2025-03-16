@@ -79,7 +79,7 @@ class ProductService(
         val brandNames = brandService.getAllBrandsByIds(brandIds = brandIds).map(Brand::name)
 
         return LowestPrices(brandNames = brandNames, category = category, price = minPrice)
-            .also(productCache::saveLowestPriceByCategoryCache) // 카테고리 별 최저가 db 조회 후 캐시에 저장
+            .also(productCache::saveLowestPriceByCategoryCache) // 카테고리별 최저가 db 조회 후 캐시에 저장
     }
 
     @Transactional(readOnly = true)
@@ -102,7 +102,7 @@ class ProductService(
         }
 
         return LowestPricesByBrand(brandName = brand.name, products = products)
-            .also(productCache::saveLowestPriceByBrandCache) // 브랜드 별 최저가 db 조회 후 캐시에 저장
+            .also(productCache::saveLowestPriceByBrandCache) // 브랜드별 최저가 db 조회 후 캐시에 저장
     }
 
     @Transactional(readOnly = true)
@@ -113,7 +113,7 @@ class ProductService(
         최저가, 최고가 조회에는 MIN(price), MAX(price) 를 활용하여 한 번의 쿼리로 보내는게 가장 효율적이기 때문에 해당 쿼리 적용
         */
             ?: productRepository.findMinMaxPriceByCategory(category = category)
-                // 카테고리 별 최저가, 최고가 db 조회 후 캐시에 저장
+                // 카테고리별 최저가, 최고가 db 조회 후 캐시에 저장
                 .also { minMaxPrice ->
                     productCache.saveMinMaxPriceByCategoryCache(
                         category = category,
