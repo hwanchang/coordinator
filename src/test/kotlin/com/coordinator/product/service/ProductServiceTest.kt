@@ -314,11 +314,17 @@ class ProductServiceTest : BehaviorSpec({
                     brandId = 2L, name = "Adidas: product: $category", category = category, price = BigDecimal(110)
                 )
             }
+            val lowestPricesByBrand = productService.getLowestPricesByBrand()
 
-            Then("예외가 발생해야 한다.") {
-                shouldThrow<EntityNotFoundException> {
-                    productService.getLowestPricesByBrand()
-                }.message shouldBe "brandId - 1, category - ${Category.entries.first()}: 해당 상품을 찾을 수 없습니다."
+            Then("해당 브랜드를 제외한 브랜드 중 최저가 브랜드를 반환해야 한다.") {
+                lowestPricesByBrand.brandName shouldBe "Adidas"
+                lowestPricesByBrand.totalPrice shouldBe BigDecimal(110).multiply(Category.entries.size.toBigDecimal())
+
+                Category.entries.forEach { category ->
+                    verify { productRepository.findFirstByBrandIdAndCategoryOrderByPriceAsc(1L, category) }
+                    verify { productRepository.findFirstByBrandIdAndCategoryOrderByPriceAsc(2L, category) }
+                }
+                verify { productCache.saveLowestPriceByBrandCache(any<LowestPricesByBrand>()) }
             }
         }
     }
