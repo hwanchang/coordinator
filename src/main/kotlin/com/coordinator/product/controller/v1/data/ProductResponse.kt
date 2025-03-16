@@ -1,7 +1,9 @@
 package com.coordinator.product.controller.v1.data
 
+import com.coordinator.common.serializer.BigDecimalPriceSerializer
 import com.coordinator.product.domain.Category
 import com.coordinator.product.domain.Product
+import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import java.math.BigDecimal
 import java.time.LocalDateTime
 
@@ -14,6 +16,7 @@ data class ProductResponse(
 
     val category: Category,
 
+    @JsonSerialize(using = BigDecimalPriceSerializer::class)
     val price: BigDecimal,
 
     val createdAt: LocalDateTime,
