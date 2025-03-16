@@ -6,6 +6,9 @@ import com.coordinator.common.api.ApiResponse.Success
 import com.coordinator.fixtures.lowMaxPricesByBrand
 import com.coordinator.fixtures.lowestPricesByBrand
 import com.coordinator.fixtures.lowestPricesByCategory
+import com.coordinator.fixtures.newLowMaxPricesByBrand
+import com.coordinator.fixtures.newLowestPricesByBrand
+import com.coordinator.fixtures.newLowestPricesByCategory
 import com.coordinator.product.controller.v1.data.CreateProductRequest
 import com.coordinator.product.controller.v1.data.ProductResponse
 import com.coordinator.product.controller.v1.data.UpdateProductPriceRequest
@@ -346,6 +349,43 @@ class ProductRestControllerTest(
             Then("캐시가 삭제되고, 상품이 정상적으로 삭제되어야 한다.") {
                 response.status shouldBe 204
                 productRepository.findByIdOrNull(71) shouldBe null
+            }
+        }
+    }
+
+    Given("다시 카테고리별 최저가 상품 조회 요청이 들어올 때") {
+        When("카테고리별 최저가 상품을 조회하면") {
+            val response = mockMvc.get("/api/v1/products/lowest-price-by-categories")
+                .andReturn().response
+
+            Then("새로운 최저가 상품 목록이 반환되어야 한다.") {
+                response.status shouldBe 200
+                response.contentAsString shouldBe newLowestPricesByCategory
+            }
+        }
+    }
+
+    Given("다시 브랜드별 최저가 상품 조회 요청이 들어올 때") {
+        When("브랜드별 최저가 상품을 조회하면") {
+            val response = mockMvc.get("/api/v1/products/lowest-price-by-brands")
+                .andReturn().response
+
+            Then("새로운 최저가 상품 목록이 반환되어야 한다.") {
+                response.status shouldBe 200
+                response.contentAsString shouldBe newLowestPricesByBrand
+            }
+        }
+    }
+
+    Given("다시 카테고리별 최저가, 최고가 상품 조회 요청이 들어올 때") {
+        When("카테고리를 기준으로 최저가, 최고가 상품을 조회하면") {
+            val response = mockMvc.get("/api/v1/products/min-max-prices") {
+                param("category", SNEAKERS.name)
+            }.andReturn().response
+
+            Then("새로운 최저, 최고가 상품 정보가 반환되어야 한다.") {
+                response.status shouldBe 200
+                response.contentAsString shouldBe newLowMaxPricesByBrand
             }
         }
     }
