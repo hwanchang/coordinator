@@ -91,7 +91,7 @@ class ProductService(
         }.minBy(LowestPricesByBrand::totalPrice)
     }
 
-    fun getLowestPricesByBrand(brand: Brand): LowestPricesByBrand {
+    private fun getLowestPricesByBrand(brand: Brand): LowestPricesByBrand {
         val products = Category.entries.map { category ->
             /*
             같은 브랜드에 동일 최저가 상품이 있어도 가격만 활용하여 최저가 비교이기 때문에 동일 최저가를 List 로 받지 않고 1개만 조회하여 가격 활용
