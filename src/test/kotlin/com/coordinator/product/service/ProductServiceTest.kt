@@ -170,7 +170,7 @@ class ProductServiceTest : BehaviorSpec({
 
     Given("카테고리별 최저가를 조회할 때") {
         val lowestPrices = Category.entries.map { category ->
-            LowestPrices(brandNames = listOf("Nike"), category = category, price = BigDecimal(100))
+            LowestPrices(brandNames = setOf("Nike"), category = category, price = BigDecimal(100))
         }
 
         When("캐시에 데이터가 있으면") {
@@ -327,8 +327,8 @@ class ProductServiceTest : BehaviorSpec({
         val category = SNEAKERS
         val minMaxPrices = MinMaxPrices(
             category = category,
-            minPrice = LowestPrices(brandNames = listOf("Nike"), category = category, price = BigDecimal(100)),
-            maxPrice = LowestPrices(brandNames = listOf("Adidas"), category = category, price = BigDecimal(200)),
+            minPrice = LowestPrices(brandNames = setOf("Nike"), category = category, price = BigDecimal(100)),
+            maxPrice = LowestPrices(brandNames = setOf("Adidas"), category = category, price = BigDecimal(200)),
         )
 
         When("캐시에 데이터가 있으면") {

@@ -6,7 +6,7 @@ import java.math.BigDecimal
 data class LowestPrices(
     val category: Category,
 
-    val brandNames: List<String>,
+    val brandNames: Set<String>,
 
     val price: BigDecimal,
 ) {

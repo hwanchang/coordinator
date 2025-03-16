@@ -57,7 +57,7 @@ class ProductCache(
             saveLowestPriceByCategoryCache(
                 lowestPrices = LowestPrices(
                     category = category,
-                    brandNames = listOf(brandName),
+                    brandNames = setOf(brandName),
                     price = product.price,
                 ),
             )

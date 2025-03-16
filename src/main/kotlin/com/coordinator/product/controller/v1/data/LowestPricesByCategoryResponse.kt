@@ -25,7 +25,7 @@ data class LowestPricesByCategoryResponse(
         * 서버에서 해당 최저가의 모든 브랜드를 내려주고 Frontend 에서는 값 변경 없이 정책에 맞춰 한 개 혹은 다수의 브랜드를 자유롭게 화면에 표시 가능
         * */
         @JsonProperty("브랜드")
-        val brand: List<String>,
+        val brand: Set<String>,
 
         @JsonProperty("가격")
         @JsonSerialize(using = BigDecimalPriceSerializer::class)

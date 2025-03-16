@@ -76,7 +76,7 @@ class ProductService(
         check(products.isNotEmpty()) { "상품은 최소 1개는 존재해야합니다." }
 
         val brandIds = products.map(Product::brandId).distinct()
-        val brandNames = brandService.getAllBrandsByIds(brandIds = brandIds).map(Brand::name)
+        val brandNames = brandService.getAllBrandsByIds(brandIds = brandIds).map(Brand::name).toSet()
 
         return LowestPrices(brandNames = brandNames, category = category, price = minPrice)
             .also(productCache::saveLowestPriceByCategoryCache) // 카테고리별 최저가 db 조회 후 캐시에 저장
@@ -132,7 +132,7 @@ class ProductService(
         val brandIds = productRepository.findAllByCategoryAndPrice(category = category, price = price)
             .map(Product::brandId)
         val brandNames = brandService.getAllBrandsByIds(brandIds = brandIds)
-            .map(Brand::name)
+            .map(Brand::name).toSet()
 
         return LowestPrices(brandNames = brandNames, category = category, price = price)
     }
