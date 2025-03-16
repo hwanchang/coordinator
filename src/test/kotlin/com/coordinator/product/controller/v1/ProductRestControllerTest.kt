@@ -213,7 +213,7 @@ class ProductRestControllerTest(
             }
         }
 
-        When("유효한 상품의 가격을 변경하면") {
+        When("카테고리의 최저가인 상품의 가격을 변경하면") {
             val response = mockMvc.patch("/api/v1/products/4") {
                 contentType = APPLICATION_JSON
                 content = """
@@ -232,7 +232,7 @@ class ProductRestControllerTest(
             }
         }
 
-        When("유효한 상품의 가격을 변경하면") {
+        When("카테고리 별 최저가에 해당하는 상품의 가격을 변경하면") {
             val response = mockMvc.patch("/api/v1/products/17") {
                 contentType = APPLICATION_JSON
                 content = """
@@ -251,7 +251,7 @@ class ProductRestControllerTest(
             }
         }
 
-        When("유효한 상품의 가격을 변경하면") {
+        When("카테고리 별 최고가에 해당하는 상품의 가격을 변경하면") {
             val response = mockMvc.patch("/api/v1/products/17") {
                 contentType = APPLICATION_JSON
                 content = """
