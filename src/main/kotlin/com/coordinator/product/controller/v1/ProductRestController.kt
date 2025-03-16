@@ -10,6 +10,8 @@ import com.coordinator.product.controller.v1.data.ProductResponse
 import com.coordinator.product.controller.v1.data.UpdateProductPriceRequest
 import com.coordinator.product.domain.Category
 import com.coordinator.product.service.ProductService
+import org.springframework.http.HttpStatus.CREATED
+import org.springframework.http.HttpStatus.NO_CONTENT
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
@@ -18,6 +20,7 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
+import org.springframework.web.bind.annotation.ResponseStatus
 import org.springframework.web.bind.annotation.RestController
 
 @RequestMapping("api/v1/products")
@@ -26,10 +29,11 @@ class ProductRestController(
     private val productService: ProductService,
 ) {
     @PostMapping
-    fun createProduct(@RequestBody request: CreateProductRequest): ApiResponse<String> {
-        productService.createProduct(product = request.toDomain())
+    @ResponseStatus(CREATED)
+    fun createProduct(@RequestBody request: CreateProductRequest): ApiResponse<ProductResponse> {
+        val response = productService.createProduct(product = request.toDomain()).let(ProductResponse::from)
 
-        return Success(result = "요청 성공")
+        return Success(result = response)
     }
 
     @GetMapping
@@ -38,26 +42,28 @@ class ProductRestController(
 
     @GetMapping("{productId}")
     fun getProduct(@PathVariable productId: Long): ApiResponse<ProductResponse> {
-        val product = productService.getProduct(productId = productId)
+        val response = productService.getProduct(productId = productId).let(ProductResponse::from)
 
-        return Success(result = ProductResponse.from(product = product))
+        return Success(result = response)
     }
 
     @PatchMapping("{productId}")
     fun updateProduct(
         @PathVariable productId: Long,
         @RequestBody request: UpdateProductPriceRequest,
-    ): ApiResponse<String> {
-        productService.updateProduct(productId = productId, price = request.price)
+    ): ApiResponse<ProductResponse> {
+        val response = productService.updateProduct(
+            productId = productId,
+            price = request.price,
+        ).let(ProductResponse::from)
 
-        return Success(result = "요청 성공")
+        return Success(result = response)
     }
 
     @DeleteMapping("{productId}")
-    fun deleteProduct(@PathVariable productId: Long): ApiResponse<String> {
+    @ResponseStatus(NO_CONTENT)
+    fun deleteProduct(@PathVariable productId: Long) {
         productService.deleteProduct(productId = productId)
-
-        return Success(result = "요청 성공")
     }
 
     @GetMapping("lowest-price-by-categories")

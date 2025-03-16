@@ -10,6 +10,8 @@ data class ProductResponse(
 
     val brandId: Long,
 
+    val name: String,
+
     val category: Category,
 
     val price: BigDecimal,
@@ -22,6 +24,7 @@ data class ProductResponse(
         fun from(product: Product) = ProductResponse(
             id = product.id,
             brandId = product.brandId,
+            name = product.name,
             category = product.category,
             price = product.price,
             createdAt = product.createdAt,

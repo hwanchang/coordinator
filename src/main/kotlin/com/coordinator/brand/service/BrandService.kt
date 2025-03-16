@@ -12,11 +12,11 @@ class BrandService(
     private val brandRepository: BrandRepository,
 ) {
     @Transactional
-    fun createBrand(brand: Brand) {
+    fun createBrand(brand: Brand): Brand {
         // 브랜드에 name 데이터만 존재하기 때문에 name 필드에 unique 적용
         check(!brandRepository.existsByName(brand.name)) { "${brand.name}: 동일한 브랜드 명이 존재합니다." }
 
-        brandRepository.save(brand)
+        return brandRepository.save(brand)
     }
 
     @Transactional(readOnly = true)
@@ -27,14 +27,14 @@ class BrandService(
         ?: throw EntityNotFoundException("$brandId: 해당 브랜드를 찾을 수 없습니다.")
 
     @Transactional
-    fun updateBrand(brandId: Long, name: String) {
+    fun updateBrand(brandId: Long, name: String): Brand {
         check(!brandRepository.existsByName(name)) { "$name: 이미 존재하는 브랜드 명으로 수정할 수 없습니다." }
 
         val brand = brandRepository.findByIdOrNull(id = brandId)
             ?.apply { update(name = name) }
             ?: throw EntityNotFoundException("$brandId: 해당 브랜드를 찾을 수 없습니다.")
 
-        brandRepository.save(brand)
+        return brandRepository.save(brand)
     }
 
     @Transactional

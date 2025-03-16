@@ -24,10 +24,10 @@ class ProductService(
     private val productCache: ProductCache,
 ) {
     @Transactional
-    fun createProduct(product: Product) {
+    fun createProduct(product: Product): Product {
         require(brandService.existsById(brandId = product.brandId)) { "${product.brandId}: 해당 브랜드를 찾을 수 없습니다." }
 
-        productRepository.save(product)
+        return productRepository.save(product)
             .also { productCache.updateCache(product) }
     }
 
@@ -39,12 +39,12 @@ class ProductService(
         ?: throw EntityNotFoundException("productId - $productId: 해당 상품을 찾을 수 없습니다.")
 
     @Transactional
-    fun updateProduct(productId: Long, price: BigDecimal) {
+    fun updateProduct(productId: Long, price: BigDecimal): Product {
         val product = productRepository.findByIdOrNull(id = productId)
             ?.apply { update(price = price) }
             ?: throw EntityNotFoundException("productId - $productId: 해당 상품을 찾을 수 없습니다.")
 
-        productRepository.save(product)
+        return productRepository.save(product)
             .also { productCache.updateCache(product) }
     }
 
