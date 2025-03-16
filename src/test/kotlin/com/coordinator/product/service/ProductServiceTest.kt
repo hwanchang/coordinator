@@ -221,14 +221,6 @@ class ProductServiceTest : BehaviorSpec({
         }
 
         When("캐시에 데이터가 없고, 카테고리에 상품이 없으면") {
-            val products = Category.entries.mapIndexed { index, category ->
-                Product(
-                    brandId = index + 1L,
-                    name = "product: $category",
-                    category = category,
-                    price = BigDecimal(100),
-                )
-            }
             every { productCache.getLowestPriceByCategoryCache(any<Category>()) } returns null
             every { productRepository.findMinPriceByCategory(any<Category>()) } returns null
 

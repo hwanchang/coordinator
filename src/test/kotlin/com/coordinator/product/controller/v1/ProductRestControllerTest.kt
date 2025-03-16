@@ -48,12 +48,14 @@ class ProductRestControllerTest(
     extension(SpringExtension)
 
     beforeSpec {
-        val flyway = Flyway.configure()
+        Flyway.configure()
             .dataSource("jdbc:h2:mem:coordinator;DB_CLOSE_DELAY=-1", "sa", "")
             .cleanDisabled(false)
             .load()
-        flyway.clean()
-        flyway.migrate()
+            .apply {
+                clean()
+                migrate()
+            }
     }
 
     val objectMapper = jacksonObjectMapper().apply {
