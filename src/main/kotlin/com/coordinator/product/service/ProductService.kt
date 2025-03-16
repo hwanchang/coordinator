@@ -84,21 +84,25 @@ class ProductService(
 
     @Transactional(readOnly = true)
     fun getLowestPricesByBrand(): LowestPricesByBrand {
-        return brandService.getBrands().map { brand ->
+        return brandService.getBrands().mapNotNull { brand ->
             productCache.getLowestPriceByBrandCache(brandName = brand.name)
                 ?: getLowestPricesByBrand(brand = brand) // 캐시 조회 후 없는 경우 db 조회
         }.minBy(LowestPricesByBrand::totalPrice)
     }
 
-    private fun getLowestPricesByBrand(brand: Brand): LowestPricesByBrand {
-        val products = Category.entries.map { category ->
+    private fun getLowestPricesByBrand(brand: Brand): LowestPricesByBrand? {
+        val products = Category.entries.mapNotNull { category ->
             /*
             같은 브랜드에 동일 최저가 상품이 있어도 가격만 활용하여 최저가 비교이기 때문에 동일 최저가를 List 로 받지 않고 1개만 조회하여 가격 활용
             맨 첫 번째 데이터 한 건만 조회하기 때문에 성능에 큰 문제가 없어서 이후 가격 외 다른 데이터를 활용할 경우도 대비하여 Entity 를 조회하도록 활용하지만
             더 효율적 조회를 해야할 정도의 상황이라면 Product 엔티티를 조회하는게 아닌 MIN(price) 조회를 활용해서 필요한 가격만 조회하도록 네트워크 비용 감소 가능
             */
             productRepository.findFirstByBrandIdAndCategoryOrderByPriceAsc(brandId = brand.id, category = category)
-                ?: throw EntityNotFoundException("brandId - ${brand.id}, category - $category: 해당 상품을 찾을 수 없습니다.")
+        }
+
+        // 모든 카테고리에 대한 상품이 다 등록되기 전까진 브랜드별 총액 최저가 조회에서 제외시키도록 null 을 return
+        if (products.size != Category.entries.size) {
+            return null
         }
 
         return LowestPricesByBrand(brandName = brand.name, products = products)

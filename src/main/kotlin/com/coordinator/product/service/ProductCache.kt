@@ -73,8 +73,14 @@ class ProductCache(
         val lowestPricesByBrand = getLowestPriceByBrandCache(brandName) ?: return
 
         val cachedProduct = lowestPricesByBrand.products.firstOrNull { it.category == product.category }
-            ?: throw IllegalStateException("상품은 최소 1개는 존재해야합니다.")
+            ?: run {
+                val newLowestPricesByBrand = lowestPricesByBrand.copy(
+                    products = (lowestPricesByBrand.products + product),
+                )
+                saveLowestPriceByBrandCache(newLowestPricesByBrand)
 
+                return@updateLowestPriceByBrandCache
+            }
         if (product.price <= cachedProduct.price) {
             val newProducts = lowestPricesByBrand.products.map { if (it.category == product.category) product else it }
             saveLowestPriceByBrandCache(
