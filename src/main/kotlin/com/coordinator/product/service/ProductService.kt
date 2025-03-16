@@ -58,7 +58,6 @@ class ProductService(
 
         productRepository.delete(product)
             .also { productCache.deleteCache(product) }
-
     }
 
     @Transactional(readOnly = true)
