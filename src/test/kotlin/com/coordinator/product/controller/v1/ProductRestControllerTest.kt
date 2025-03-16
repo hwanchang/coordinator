@@ -9,9 +9,13 @@ import com.coordinator.fixtures.lowestPricesByCategory
 import com.coordinator.product.controller.v1.data.CreateProductRequest
 import com.coordinator.product.controller.v1.data.ProductResponse
 import com.coordinator.product.controller.v1.data.UpdateProductPriceRequest
+import com.coordinator.product.domain.Category.ACCESSORY
+import com.coordinator.product.domain.Category.HAT
+import com.coordinator.product.domain.Category.OUTER
 import com.coordinator.product.domain.Category.SNEAKERS
 import com.coordinator.product.domain.Category.SOCKS
 import com.coordinator.product.domain.Category.TOP
+import com.coordinator.product.domain.Category.TROUSERS
 import com.coordinator.product.repository.jpa.ProductRepository
 import com.fasterxml.jackson.databind.module.SimpleModule
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
@@ -218,9 +222,9 @@ class ProductRestControllerTest(
 
         When("카테고리의 최저가인 상품의 가격을 변경하면") {
             val request = UpdateProductPriceRequest(
-                price = BigDecimal(9000),
+                price = BigDecimal(3000),
             )
-            val response = mockMvc.patch("/api/v1/products/4") {
+            val response = mockMvc.patch("/api/v1/products/30") {
                 contentType = APPLICATION_JSON
                 content = objectMapper.writeValueAsString(request)
             }.andReturn().response
@@ -229,19 +233,19 @@ class ProductRestControllerTest(
             Then("카테고리 별 최저가(LowestPricesByCategory) 캐시가 업데이트 되고, 상품 가격이 정상적으로 변경되어야 한다.") {
                 response.status shouldBe 200
                 apiResponse.isSucceeded shouldBe true
-                apiResponse.result.brandId shouldBe 1
-                apiResponse.result.name shouldBe "A-상품-4"
-                apiResponse.result.category shouldBe SNEAKERS
-                apiResponse.result.price shouldBe BigDecimal(9000)
-                productRepository.findByIdOrNull(4)!!.price shouldBe BigDecimal(9000)
+                apiResponse.result.brandId shouldBe 4
+                apiResponse.result.name shouldBe "D-상품-6"
+                apiResponse.result.category shouldBe HAT
+                apiResponse.result.price shouldBe BigDecimal(3000)
+                productRepository.findByIdOrNull(30)!!.price shouldBe BigDecimal(3000)
             }
         }
 
         When("카테고리 별 최저가에 해당하는 상품의 가격을 변경하면") {
             val request = UpdateProductPriceRequest(
-                price = BigDecimal(10),
+                price = BigDecimal(6000),
             )
-            val response = mockMvc.patch("/api/v1/products/17") {
+            val response = mockMvc.patch("/api/v1/products/34") {
                 contentType = APPLICATION_JSON
                 content = objectMapper.writeValueAsString(request)
             }.andReturn().response
@@ -250,19 +254,19 @@ class ProductRestControllerTest(
             Then("카테고리 별 최저가, 최고가(MinMaxPricesByCategory)의 최저가 변경으로 캐시가 업데이트 되고, 상품 가격이 정상적으로 변경되어야 한다.") {
                 response.status shouldBe 200
                 apiResponse.isSucceeded shouldBe true
-                apiResponse.result.brandId shouldBe 3
-                apiResponse.result.name shouldBe "C-상품-1"
-                apiResponse.result.category shouldBe TOP
-                apiResponse.result.price shouldBe BigDecimal(10)
-                productRepository.findByIdOrNull(17)!!.price shouldBe BigDecimal(10)
+                apiResponse.result.brandId shouldBe 5
+                apiResponse.result.name shouldBe "E-상품-2"
+                apiResponse.result.category shouldBe OUTER
+                apiResponse.result.price shouldBe BigDecimal(6000)
+                productRepository.findByIdOrNull(34)!!.price shouldBe BigDecimal(6000)
             }
         }
 
         When("카테고리 별 최고가에 해당하는 상품의 가격을 변경하면") {
             val request = UpdateProductPriceRequest(
-                price = BigDecimal(20000),
+                price = BigDecimal(2100),
             )
-            val response = mockMvc.patch("/api/v1/products/17") {
+            val response = mockMvc.patch("/api/v1/products/3") {
                 contentType = APPLICATION_JSON
                 content = objectMapper.writeValueAsString(request)
             }.andReturn().response
@@ -271,19 +275,19 @@ class ProductRestControllerTest(
             Then("카테고리 별 최저가, 최고가(MinMaxPricesByCategory)의 최고가 변경으로 캐시가 업데이트 되고, 상품 가격이 정상적으로 변경되어야 한다.") {
                 response.status shouldBe 200
                 apiResponse.isSucceeded shouldBe true
-                apiResponse.result.brandId shouldBe 3
-                apiResponse.result.name shouldBe "C-상품-1"
-                apiResponse.result.category shouldBe TOP
-                apiResponse.result.price shouldBe BigDecimal(20000)
-                productRepository.findByIdOrNull(17)!!.price shouldBe BigDecimal(20000)
+                apiResponse.result.brandId shouldBe 1
+                apiResponse.result.name shouldBe "A-상품-3"
+                apiResponse.result.category shouldBe TROUSERS
+                apiResponse.result.price shouldBe BigDecimal(2100)
+                productRepository.findByIdOrNull(3)!!.price shouldBe BigDecimal(2100)
             }
         }
 
         When("유효한 상품의 가격을 변경하면") {
             val request = UpdateProductPriceRequest(
-                price = BigDecimal(10),
+                price = BigDecimal(2300),
             )
-            val response = mockMvc.patch("/api/v1/products/4") {
+            val response = mockMvc.patch("/api/v1/products/72") {
                 contentType = APPLICATION_JSON
                 content = objectMapper.writeValueAsString(request)
             }.andReturn().response
@@ -292,11 +296,11 @@ class ProductRestControllerTest(
             Then("상품 가격이 정상적으로 변경되어야 한다.") {
                 response.status shouldBe 200
                 apiResponse.isSucceeded shouldBe true
-                apiResponse.result.brandId shouldBe 1
-                apiResponse.result.name shouldBe "A-상품-4"
-                apiResponse.result.category shouldBe SNEAKERS
-                apiResponse.result.price shouldBe BigDecimal(10)
-                productRepository.findByIdOrNull(4)!!.price shouldBe BigDecimal(10)
+                apiResponse.result.brandId shouldBe 9
+                apiResponse.result.name shouldBe "I-상품-8"
+                apiResponse.result.category shouldBe ACCESSORY
+                apiResponse.result.price shouldBe BigDecimal(2300)
+                productRepository.findByIdOrNull(72)!!.price shouldBe BigDecimal(2300)
             }
         }
     }
