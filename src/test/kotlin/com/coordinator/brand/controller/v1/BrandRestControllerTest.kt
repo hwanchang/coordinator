@@ -77,12 +77,12 @@ class BrandRestControllerTest(
                 contentType = APPLICATION_JSON
                 content = objectMapper.writeValueAsString(request)
             }.andReturn().response
-            val apiResponse = objectMapper.readValue<Success<String>>(response.contentAsString)
+            val apiResponse = objectMapper.readValue<Success<BrandResponse>>(response.contentAsString)
 
             Then("브랜드가 정상적으로 생성되어야 한다.") {
-                response.status shouldBe 200
+                response.status shouldBe 201
                 apiResponse.isSucceeded shouldBe true
-                apiResponse.result shouldBe "요청 성공"
+                apiResponse.result.name shouldBe "Nike"
                 brandRepository.count() shouldBe 10
             }
         }
@@ -164,11 +164,12 @@ class BrandRestControllerTest(
                 contentType = APPLICATION_JSON
                 content = objectMapper.writeValueAsString(request)
             }.andReturn().response
-            val apiResponse = objectMapper.readValue<Success<String>>(response.contentAsString)
+            val apiResponse = objectMapper.readValue<Success<BrandResponse>>(response.contentAsString)
 
             Then("브랜드 이름이 정상적으로 변경되어야 한다.") {
                 response.status shouldBe 200
                 apiResponse.isSucceeded shouldBe true
+                apiResponse.result.name shouldBe "Adidas"
                 brandRepository.findByIdOrNull(10)!!.name shouldBe "Adidas"
             }
         }
@@ -190,11 +191,9 @@ class BrandRestControllerTest(
         When("브랜드를 삭제하면") {
             val response = mockMvc.delete("/api/v1/brands/10")
                 .andReturn().response
-            val apiResponse = objectMapper.readValue<Success<String>>(response.contentAsString)
 
             Then("브랜드가 정상적으로 삭제되어야 한다.") {
-                response.status shouldBe 200
-                apiResponse.isSucceeded shouldBe true
+                response.status shouldBe 204
                 brandRepository.findByIdOrNull(10) shouldBe null
             }
         }

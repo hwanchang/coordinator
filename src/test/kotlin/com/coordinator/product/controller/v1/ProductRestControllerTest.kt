@@ -125,12 +125,15 @@ class ProductRestControllerTest(
                 contentType = APPLICATION_JSON
                 content = objectMapper.writeValueAsString(request)
             }.andReturn().response
-            val apiResponse = objectMapper.readValue<Success<String>>(response.contentAsString)
+            val apiResponse = objectMapper.readValue<Success<ProductResponse>>(response.contentAsString)
 
             Then("상품이 정상적으로 생성되어야 한다.") {
-                response.status shouldBe 200
+                response.status shouldBe 201
                 apiResponse.isSucceeded shouldBe true
-                apiResponse.result shouldBe "요청 성공"
+                apiResponse.result.brandId shouldBe 1
+                apiResponse.result.name shouldBe "Air Force 1"
+                apiResponse.result.category shouldBe SNEAKERS
+                apiResponse.result.price shouldBe BigDecimal(100000)
             }
         }
 
@@ -221,12 +224,15 @@ class ProductRestControllerTest(
                 contentType = APPLICATION_JSON
                 content = objectMapper.writeValueAsString(request)
             }.andReturn().response
-            val apiResponse = objectMapper.readValue<Success<String>>(response.contentAsString)
+            val apiResponse = objectMapper.readValue<Success<ProductResponse>>(response.contentAsString)
 
             Then("카테고리 별 최저가(LowestPricesByCategory) 캐시가 업데이트 되고, 상품 가격이 정상적으로 변경되어야 한다.") {
                 response.status shouldBe 200
                 apiResponse.isSucceeded shouldBe true
-                apiResponse.result shouldBe "요청 성공"
+                apiResponse.result.brandId shouldBe 1
+                apiResponse.result.name shouldBe "A-상품-4"
+                apiResponse.result.category shouldBe SNEAKERS
+                apiResponse.result.price shouldBe BigDecimal(9000)
                 productRepository.findByIdOrNull(4)!!.price shouldBe BigDecimal(9000)
             }
         }
@@ -239,12 +245,15 @@ class ProductRestControllerTest(
                 contentType = APPLICATION_JSON
                 content = objectMapper.writeValueAsString(request)
             }.andReturn().response
-            val apiResponse = objectMapper.readValue<Success<String>>(response.contentAsString)
+            val apiResponse = objectMapper.readValue<Success<ProductResponse>>(response.contentAsString)
 
             Then("카테고리 별 최저가, 최고가(MinMaxPricesByCategory)의 최저가 변경으로 캐시가 업데이트 되고, 상품 가격이 정상적으로 변경되어야 한다.") {
                 response.status shouldBe 200
                 apiResponse.isSucceeded shouldBe true
-                apiResponse.result shouldBe "요청 성공"
+                apiResponse.result.brandId shouldBe 3
+                apiResponse.result.name shouldBe "C-상품-1"
+                apiResponse.result.category shouldBe TOP
+                apiResponse.result.price shouldBe BigDecimal(10)
                 productRepository.findByIdOrNull(17)!!.price shouldBe BigDecimal(10)
             }
         }
@@ -257,12 +266,15 @@ class ProductRestControllerTest(
                 contentType = APPLICATION_JSON
                 content = objectMapper.writeValueAsString(request)
             }.andReturn().response
-            val apiResponse = objectMapper.readValue<Success<String>>(response.contentAsString)
+            val apiResponse = objectMapper.readValue<Success<ProductResponse>>(response.contentAsString)
 
             Then("카테고리 별 최저가, 최고가(MinMaxPricesByCategory)의 최고가 변경으로 캐시가 업데이트 되고, 상품 가격이 정상적으로 변경되어야 한다.") {
                 response.status shouldBe 200
                 apiResponse.isSucceeded shouldBe true
-                apiResponse.result shouldBe "요청 성공"
+                apiResponse.result.brandId shouldBe 3
+                apiResponse.result.name shouldBe "C-상품-1"
+                apiResponse.result.category shouldBe TOP
+                apiResponse.result.price shouldBe BigDecimal(20000)
                 productRepository.findByIdOrNull(17)!!.price shouldBe BigDecimal(20000)
             }
         }
@@ -275,12 +287,15 @@ class ProductRestControllerTest(
                 contentType = APPLICATION_JSON
                 content = objectMapper.writeValueAsString(request)
             }.andReturn().response
-            val apiResponse = objectMapper.readValue<Success<String>>(response.contentAsString)
+            val apiResponse = objectMapper.readValue<Success<ProductResponse>>(response.contentAsString)
 
             Then("상품 가격이 정상적으로 변경되어야 한다.") {
                 response.status shouldBe 200
                 apiResponse.isSucceeded shouldBe true
-                apiResponse.result shouldBe "요청 성공"
+                apiResponse.result.brandId shouldBe 1
+                apiResponse.result.name shouldBe "A-상품-4"
+                apiResponse.result.category shouldBe SNEAKERS
+                apiResponse.result.price shouldBe BigDecimal(10)
                 productRepository.findByIdOrNull(4)!!.price shouldBe BigDecimal(10)
             }
         }
@@ -302,12 +317,9 @@ class ProductRestControllerTest(
         When("유효한 상품을 삭제하면") {
             val response = mockMvc.delete("/api/v1/products/4")
                 .andReturn().response
-            val apiResponse = objectMapper.readValue<Success<String>>(response.contentAsString)
 
             Then("상품이 정상적으로 삭제되어야 한다.") {
-                response.status shouldBe 200
-                apiResponse.isSucceeded shouldBe true
-                apiResponse.result shouldBe "요청 성공"
+                response.status shouldBe 204
                 productRepository.findByIdOrNull(4) shouldBe null
             }
         }
@@ -326,12 +338,9 @@ class ProductRestControllerTest(
             }.andReturn()
             val response = mockMvc.delete("/api/v1/products/71")
                 .andReturn().response
-            val apiResponse = objectMapper.readValue<Success<String>>(response.contentAsString)
 
             Then("캐시가 삭제되고, 상품이 정상적으로 삭제되어야 한다.") {
-                response.status shouldBe 200
-                apiResponse.isSucceeded shouldBe true
-                apiResponse.result shouldBe "요청 성공"
+                response.status shouldBe 204
                 productRepository.findByIdOrNull(71) shouldBe null
             }
         }
