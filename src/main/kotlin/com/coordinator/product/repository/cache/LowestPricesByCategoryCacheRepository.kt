@@ -7,16 +7,16 @@ import org.springframework.stereotype.Repository
 @Repository
 class LowestPricesByCategoryCacheRepository(
     private val cache: Cache<String, LowestPrices>,
-) {
-    fun save(key: String, value: LowestPrices) {
+) : CacheRepository<String, LowestPrices> {
+    override fun save(key: String, value: LowestPrices) {
         cache.put(key, value)
     }
 
-    fun getOrNull(key: String): LowestPrices? {
+    override fun getOrNull(key: String): LowestPrices? {
         return cache.getOrNull(key)
     }
 
-    fun remove(key: String) {
+    override fun remove(key: String) {
         cache.remove(key)
     }
 }
