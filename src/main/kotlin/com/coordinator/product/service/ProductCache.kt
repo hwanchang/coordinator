@@ -94,18 +94,26 @@ class ProductCache(
         val category = product.category
         val (minPrice, maxPrice) = getMinMaxPriceByCategoryCache(category) ?: return
 
-        if (product.price < minPrice) {
+        if (product.price <= minPrice) {
             saveMinMaxPriceByCategoryCache(
                 category = category,
                 minMaxPrice = MinMaxPrice(minPrice = product.price, maxPrice = maxPrice),
             )
+        } else {
+            val key = "$minMaxPricesByCategoryKey:$category"
+
+            minMaxPricesByCategoryCacheRepository.remove(key = key)
         }
 
-        if (product.price > maxPrice) {
+        if (product.price >= maxPrice) {
             saveMinMaxPriceByCategoryCache(
                 category = category,
                 minMaxPrice = MinMaxPrice(minPrice = minPrice, maxPrice = product.price),
             )
+        } else {
+            val key = "$minMaxPricesByCategoryKey:$category"
+
+            minMaxPricesByCategoryCacheRepository.remove(key = key)
         }
     }
 
