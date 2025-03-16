@@ -1,6 +1,8 @@
 package com.coordinator.brand.controller.v1
 
 import com.coordinator.brand.controller.v1.data.BrandResponse
+import com.coordinator.brand.controller.v1.data.CreateBrandRequest
+import com.coordinator.brand.controller.v1.data.UpdateBrandNameRequest
 import com.coordinator.brand.repository.BrandRepository
 import com.coordinator.common.api.ApiResponse.Failure
 import com.coordinator.common.api.ApiResponse.Success
@@ -54,13 +56,10 @@ class BrandRestControllerTest(
 
     Given("브랜드 생성 요청이 들어올 때") {
         When("기존과 동일한 이름의 브랜드를 등록하면") {
+            val request = CreateBrandRequest(name = "A")
             val response = mockMvc.post("/api/v1/brands") {
                 contentType = APPLICATION_JSON
-                content = """
-                    {
-                        "name": "A"
-                    }
-                """.trimIndent()
+                content = objectMapper.writeValueAsString(request)
             }.andReturn().response
             val apiResponse = objectMapper.readValue<Failure<String>>(response.contentAsString)
 
@@ -73,13 +72,10 @@ class BrandRestControllerTest(
         }
 
         When("새로운 브랜드를 등록하면") {
+            val request = CreateBrandRequest(name = "Nike")
             val response = mockMvc.post("/api/v1/brands") {
                 contentType = APPLICATION_JSON
-                content = """
-                    {
-                        "name": "Nike"
-                    }
-                """.trimIndent()
+                content = objectMapper.writeValueAsString(request)
             }.andReturn().response
             val apiResponse = objectMapper.readValue<Success<String>>(response.contentAsString)
 
@@ -133,13 +129,10 @@ class BrandRestControllerTest(
 
     Given("브랜드 수정 요청이 들어올 때") {
         When("잘못된 id로 브랜드를 수정하면") {
+            val request = UpdateBrandNameRequest(name = "Adidas")
             val response = mockMvc.patch("/api/v1/brands/9999") {
                 contentType = APPLICATION_JSON
-                content = """
-                    {
-                        "name": "Adidas"
-                    }
-                """.trimIndent()
+                content = objectMapper.writeValueAsString(request)
             }.andReturn().response
             val apiResponse = objectMapper.readValue<Failure<BrandResponse>>(response.contentAsString)
 
@@ -151,13 +144,10 @@ class BrandRestControllerTest(
         }
 
         When("이미 존재하는 브랜드 명으로 수정하면") {
+            val request = UpdateBrandNameRequest(name = "A")
             val response = mockMvc.patch("/api/v1/brands/10") {
                 contentType = APPLICATION_JSON
-                content = """
-                    {
-                        "name": "A"
-                    }
-                """.trimIndent()
+                content = objectMapper.writeValueAsString(request)
             }.andReturn().response
             val apiResponse = objectMapper.readValue<Failure<String>>(response.contentAsString)
 
@@ -169,13 +159,10 @@ class BrandRestControllerTest(
         }
 
         When("가능한 브랜드 명을 수정하면") {
+            val request = UpdateBrandNameRequest(name = "Adidas")
             val response = mockMvc.patch("/api/v1/brands/10") {
                 contentType = APPLICATION_JSON
-                content = """
-                    {
-                        "name": "Adidas"
-                    }
-                """.trimIndent()
+                content = objectMapper.writeValueAsString(request)
             }.andReturn().response
             val apiResponse = objectMapper.readValue<Success<String>>(response.contentAsString)
 

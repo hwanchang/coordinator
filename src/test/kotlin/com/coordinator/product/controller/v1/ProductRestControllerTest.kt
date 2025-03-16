@@ -6,7 +6,10 @@ import com.coordinator.common.api.ApiResponse.Success
 import com.coordinator.fixtures.lowMaxPricesByBrand
 import com.coordinator.fixtures.lowestPricesByBrand
 import com.coordinator.fixtures.lowestPricesByCategory
+import com.coordinator.product.controller.v1.data.CreateProductRequest
 import com.coordinator.product.controller.v1.data.ProductResponse
+import com.coordinator.product.controller.v1.data.UpdateProductPriceRequest
+import com.coordinator.product.domain.Category.SNEAKERS
 import com.coordinator.product.domain.Category.SOCKS
 import com.coordinator.product.domain.Category.TOP
 import com.coordinator.product.repository.jpa.ProductRepository
@@ -112,16 +115,15 @@ class ProductRestControllerTest(
 
     Given("상품 생성 요청이 들어올 때") {
         When("유효한 상품 정보를 등록하면") {
+            val request = CreateProductRequest(
+                brandId = 1,
+                name = "Air Force 1",
+                category = SNEAKERS,
+                price = BigDecimal(100000),
+            )
             val response = mockMvc.post("/api/v1/products") {
                 contentType = APPLICATION_JSON
-                content = """
-                    {
-                        "brandId": 1,
-                        "name": "Air Force 1",
-                        "category": "스니커즈",
-                        "price": 100000
-                    }
-                """.trimIndent()
+                content = objectMapper.writeValueAsString(request)
             }.andReturn().response
             val apiResponse = objectMapper.readValue<Success<String>>(response.contentAsString)
 
@@ -133,16 +135,15 @@ class ProductRestControllerTest(
         }
 
         When("존재하지 않는 브랜드 id로 상품을 등록하면") {
+            val request = CreateProductRequest(
+                brandId = 9999,
+                name = "Air Force 1",
+                category = SNEAKERS,
+                price = BigDecimal(100000),
+            )
             val response = mockMvc.post("/api/v1/products") {
                 contentType = APPLICATION_JSON
-                content = """
-                    {
-                        "brandId": 9999,
-                        "name": "Air Force 1",
-                        "category": "스니커즈",
-                        "price": 100000
-                    }
-                """.trimIndent()
+                content = objectMapper.writeValueAsString(request)
             }.andReturn().response
             val apiResponse = objectMapper.readValue<Failure<String>>(response.contentAsString)
 
@@ -196,13 +197,12 @@ class ProductRestControllerTest(
 
     Given("상품 수정 요청이 들어올 때") {
         When("존재하지 않는 상품의 가격을 변경하면") {
+            val request = UpdateProductPriceRequest(
+                price = BigDecimal(150000),
+            )
             val response = mockMvc.patch("/api/v1/products/9999") {
                 contentType = APPLICATION_JSON
-                content = """
-                    {
-                        "price": 150000
-                    }
-                """.trimIndent()
+                content = objectMapper.writeValueAsString(request)
             }.andReturn().response
             val apiResponse = objectMapper.readValue<Failure<String>>(response.contentAsString)
 
@@ -214,13 +214,12 @@ class ProductRestControllerTest(
         }
 
         When("카테고리의 최저가인 상품의 가격을 변경하면") {
+            val request = UpdateProductPriceRequest(
+                price = BigDecimal(9000),
+            )
             val response = mockMvc.patch("/api/v1/products/4") {
                 contentType = APPLICATION_JSON
-                content = """
-                    {
-                        "price": 9000
-                    }
-                """.trimIndent()
+                content = objectMapper.writeValueAsString(request)
             }.andReturn().response
             val apiResponse = objectMapper.readValue<Success<String>>(response.contentAsString)
 
@@ -233,13 +232,12 @@ class ProductRestControllerTest(
         }
 
         When("카테고리 별 최저가에 해당하는 상품의 가격을 변경하면") {
+            val request = UpdateProductPriceRequest(
+                price = BigDecimal(10),
+            )
             val response = mockMvc.patch("/api/v1/products/17") {
                 contentType = APPLICATION_JSON
-                content = """
-                    {
-                        "price": 10
-                    }
-                """.trimIndent()
+                content = objectMapper.writeValueAsString(request)
             }.andReturn().response
             val apiResponse = objectMapper.readValue<Success<String>>(response.contentAsString)
 
@@ -252,13 +250,12 @@ class ProductRestControllerTest(
         }
 
         When("카테고리 별 최고가에 해당하는 상품의 가격을 변경하면") {
+            val request = UpdateProductPriceRequest(
+                price = BigDecimal(20000),
+            )
             val response = mockMvc.patch("/api/v1/products/17") {
                 contentType = APPLICATION_JSON
-                content = """
-                    {
-                        "price": 20000
-                    }
-                """.trimIndent()
+                content = objectMapper.writeValueAsString(request)
             }.andReturn().response
             val apiResponse = objectMapper.readValue<Success<String>>(response.contentAsString)
 
@@ -271,13 +268,12 @@ class ProductRestControllerTest(
         }
 
         When("유효한 상품의 가격을 변경하면") {
+            val request = UpdateProductPriceRequest(
+                price = BigDecimal(10),
+            )
             val response = mockMvc.patch("/api/v1/products/4") {
                 contentType = APPLICATION_JSON
-                content = """
-                    {
-                        "price": 10
-                    }
-                """.trimIndent()
+                content = objectMapper.writeValueAsString(request)
             }.andReturn().response
             val apiResponse = objectMapper.readValue<Success<String>>(response.contentAsString)
 
@@ -318,16 +314,15 @@ class ProductRestControllerTest(
 
         When("카테고리 별 최저가, 최고가(MinMaxPricesByCategory)의 최고가인 유효한 상품을 삭제하면") {
             mockMvc.get("/api/v1/products/min-max-prices") { param("category", SOCKS.name) }.andReturn()
+            val request = CreateProductRequest(
+                brandId = 9,
+                name = "양말 아이템",
+                category = SOCKS,
+                price = BigDecimal(2000),
+            )
             mockMvc.post("/api/v1/products") {
                 contentType = APPLICATION_JSON
-                content = """
-                    {
-                        "brandId": 9,
-                        "name": "양말 아이템",
-                        "category": "양말",
-                        "price": 2000
-                    }
-                """.trimIndent()
+                content = objectMapper.writeValueAsString(request)
             }.andReturn()
             val response = mockMvc.delete("/api/v1/products/71")
                 .andReturn().response
