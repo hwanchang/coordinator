@@ -102,14 +102,14 @@ class BrandRestControllerTest(
         }
 
         When("존재하지 않는 id로 브랜드를 조회하면") {
-            val response = mockMvc.get("/api/v1/brands/9999")
+            val response = mockMvc.get("/api/v1/brands/-1")
                 .andReturn().response
             val apiResponse = objectMapper.readValue<Failure<BrandResponse>>(response.contentAsString)
 
             Then("404 에러가 발생해야 한다.") {
                 response.status shouldBe 404
                 apiResponse.isSucceeded shouldBe false
-                apiResponse.errorMessage shouldBe "9999: 해당 브랜드를 찾을 수 없습니다."
+                apiResponse.errorMessage shouldBe "-1: 해당 브랜드를 찾을 수 없습니다."
             }
         }
 
@@ -130,7 +130,7 @@ class BrandRestControllerTest(
     Given("브랜드 수정 요청이 들어올 때") {
         When("잘못된 id로 브랜드를 수정하면") {
             val request = UpdateBrandNameRequest(name = "Adidas")
-            val response = mockMvc.patch("/api/v1/brands/9999") {
+            val response = mockMvc.patch("/api/v1/brands/-1") {
                 contentType = APPLICATION_JSON
                 content = objectMapper.writeValueAsString(request)
             }.andReturn().response
@@ -139,7 +139,7 @@ class BrandRestControllerTest(
             Then("404 에러가 발생해야 한다.") {
                 response.status shouldBe 404
                 apiResponse.isSucceeded shouldBe false
-                apiResponse.errorMessage shouldBe "9999: 해당 브랜드를 찾을 수 없습니다."
+                apiResponse.errorMessage shouldBe "-1: 해당 브랜드를 찾을 수 없습니다."
             }
         }
 
@@ -176,14 +176,14 @@ class BrandRestControllerTest(
 
     Given("브랜드 삭제 요청이 들어올 때") {
         When("잘못된 id로 브랜드를 삭제하면") {
-            val response = mockMvc.delete("/api/v1/brands/9999")
+            val response = mockMvc.delete("/api/v1/brands/-1")
                 .andReturn().response
             val apiResponse = objectMapper.readValue<Failure<BrandResponse>>(response.contentAsString)
 
             Then("404 에러가 발생해야 한다.") {
                 response.status shouldBe 404
                 apiResponse.isSucceeded shouldBe false
-                apiResponse.errorMessage shouldBe "9999: 해당 브랜드를 찾을 수 없습니다."
+                apiResponse.errorMessage shouldBe "-1: 해당 브랜드를 찾을 수 없습니다."
             }
         }
 

@@ -136,7 +136,7 @@ class ProductRestControllerTest(
 
         When("존재하지 않는 브랜드 id로 상품을 등록하면") {
             val request = CreateProductRequest(
-                brandId = 9999,
+                brandId = -1,
                 name = "Air Force 1",
                 category = SNEAKERS,
                 price = BigDecimal(100000),
@@ -150,7 +150,7 @@ class ProductRestControllerTest(
             Then("400 에러가 발생해야 한다.") {
                 response.status shouldBe 400
                 apiResponse.isSucceeded shouldBe false
-                apiResponse.errorMessage shouldBe "9999: 해당 브랜드를 찾을 수 없습니다."
+                apiResponse.errorMessage shouldBe "-1: 해당 브랜드를 찾을 수 없습니다."
             }
         }
     }
@@ -169,14 +169,14 @@ class ProductRestControllerTest(
         }
 
         When("존재하지 않는 상품 id를 조회하면") {
-            val response = mockMvc.get("/api/v1/products/9999")
+            val response = mockMvc.get("/api/v1/products/-1")
                 .andReturn().response
             val apiResponse = objectMapper.readValue<Failure<ProductResponse>>(response.contentAsString)
 
             Then("404 에러가 발생해야 한다.") {
                 response.status shouldBe 404
                 apiResponse.isSucceeded shouldBe false
-                apiResponse.errorMessage shouldBe "productId - 9999: 해당 상품을 찾을 수 없습니다."
+                apiResponse.errorMessage shouldBe "productId - -1: 해당 상품을 찾을 수 없습니다."
             }
         }
 
@@ -200,7 +200,7 @@ class ProductRestControllerTest(
             val request = UpdateProductPriceRequest(
                 price = BigDecimal(150000),
             )
-            val response = mockMvc.patch("/api/v1/products/9999") {
+            val response = mockMvc.patch("/api/v1/products/-1") {
                 contentType = APPLICATION_JSON
                 content = objectMapper.writeValueAsString(request)
             }.andReturn().response
@@ -209,7 +209,7 @@ class ProductRestControllerTest(
             Then("404 에러가 발생해야 한다.") {
                 response.status shouldBe 404
                 apiResponse.isSucceeded shouldBe false
-                apiResponse.errorMessage shouldBe "productId - 9999: 해당 상품을 찾을 수 없습니다."
+                apiResponse.errorMessage shouldBe "productId - -1: 해당 상품을 찾을 수 없습니다."
             }
         }
 
@@ -288,14 +288,14 @@ class ProductRestControllerTest(
 
     Given("상품 삭제 요청이 들어올 때") {
         When("존재하지 않는 상품을 삭제하면") {
-            val response = mockMvc.delete("/api/v1/products/9999")
+            val response = mockMvc.delete("/api/v1/products/-1")
                 .andReturn().response
             val apiResponse = objectMapper.readValue<Failure<String>>(response.contentAsString)
 
             Then("404 에러가 발생해야 한다.") {
                 response.status shouldBe 404
                 apiResponse.isSucceeded shouldBe false
-                apiResponse.errorMessage shouldBe "productId - 9999: 해당 상품을 찾을 수 없습니다."
+                apiResponse.errorMessage shouldBe "productId - -1: 해당 상품을 찾을 수 없습니다."
             }
         }
 
