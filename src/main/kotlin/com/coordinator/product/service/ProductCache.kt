@@ -61,6 +61,10 @@ class ProductCache(
                     price = product.price,
                 ),
             )
+        } else {
+            val key = "$lowestPricesByCategoryKey:$category"
+
+            lowestPricesByCategoryCacheRepository.remove(key = key)
         }
     }
 
@@ -71,13 +75,16 @@ class ProductCache(
         val cachedProduct = lowestPricesByBrand.products.firstOrNull { it.category == product.category }
             ?: throw IllegalStateException("상품은 최소 1개는 존재해야합니다.")
 
-        if (product.price < cachedProduct.price) {
+        if (product.price <= cachedProduct.price) {
             val newProducts = lowestPricesByBrand.products.map { if (it.category == product.category) product else it }
             saveLowestPriceByBrandCache(
                 lowestPricesByBrand = LowestPricesByBrand(brandName = brandName, products = newProducts),
             )
-        }
+        } else {
+            val key = "$lowestPricesByBrandKey:$brandName"
 
+            lowestPricesByBrandCacheRepository.remove(key = key)
+        }
     }
 
     private fun updateMinMaxPriceByCategoryCache(product: Product) {
