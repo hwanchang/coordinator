@@ -119,10 +119,7 @@ class ProductService(
             ?: productRepository.findMinMaxPriceByCategory(category = category)
                 // 카테고리별 최저가, 최고가 db 조회 후 캐시에 저장
                 .also { minMaxPrice ->
-                    productCache.saveMinMaxPriceByCategoryCache(
-                        category = category,
-                        minMaxPrice = minMaxPrice
-                    )
+                    productCache.saveMinMaxPriceByCategoryCache(category = category, minMaxPrice = minMaxPrice)
                 }
 
         return MinMaxPrices(
