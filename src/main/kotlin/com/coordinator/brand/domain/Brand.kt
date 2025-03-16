@@ -16,6 +16,10 @@ class Brand(
 
     var name: String,
 ) : BaseTimeEntity() {
+    init {
+        require(name.isNotBlank()) { "브랜드 이름은 공백일 수 없습니다." }
+    }
+
     fun update(name: String) {
         this.name = name
     }

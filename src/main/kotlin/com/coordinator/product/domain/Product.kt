@@ -26,6 +26,11 @@ class Product(
 
     var price: BigDecimal,
 ) : BaseTimeEntity() {
+    init {
+        require(name.isNotBlank()) { "상품 이름은 공백일 수 없습니다." }
+        require(price < BigDecimal.valueOf(1_000_000_000_000)) { "가격은 1,000,000,000,000원을 넘을 수 없습니다." }
+    }
+
     fun update(price: BigDecimal) {
         this.price = price
     }
