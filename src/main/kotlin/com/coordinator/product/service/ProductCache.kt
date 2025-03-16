@@ -19,18 +19,15 @@ class ProductCache(
 
     private val lowestPricesByCategoryCacheRepository: LowestPricesByCategoryCacheRepository,
 
-    @Value("\${cache.key.lowest-prices-by-category}")
-    private val lowestPricesByCategoryKey: String,
+    @Value("\${cache.key.lowest-prices-by-category}") private val lowestPricesByCategoryKey: String,
 
     private val lowestPricesByBrandCacheRepository: LowestPricesByBrandCacheRepository,
 
-    @Value("\${cache.key.lowest-prices-by-brand}")
-    private val lowestPricesByBrandKey: String,
+    @Value("\${cache.key.lowest-prices-by-brand}") private val lowestPricesByBrandKey: String,
 
     private val minMaxPricesByCategoryCacheRepository: MinMaxPricesByCategoryCacheRepository,
 
-    @Value("\${cache.key.min-max-prices-by-category}")
-    private val minMaxPricesByCategoryKey: String,
+    @Value("\${cache.key.min-max-prices-by-category}") private val minMaxPricesByCategoryKey: String,
 ) {
     fun updateCache(product: Product) {
         val brand = brandService.getBrand(brandId = product.brandId)
