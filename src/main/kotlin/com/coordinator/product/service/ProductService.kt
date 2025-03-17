@@ -54,7 +54,7 @@ class ProductService(
             ?: throw EntityNotFoundException("productId - $productId: 해당 상품을 찾을 수 없습니다.")
 
         val productCount = productRepository.countByBrandIdAndCategory(product.brandId, product.category)
-        check(productCount > 1) { "상품이 한 개인 경우는 삭제할 수 없습니다." } // 상품 품절은 없다고 가정
+        check(productCount > 1) { "해당 브랜드의 카테고리에 상품이 한 개인 경우는 삭제할 수 없습니다." } // 상품 품절은 없다고 가정
 
         productRepository.delete(product)
             .also { productCache.deleteCache(product) }

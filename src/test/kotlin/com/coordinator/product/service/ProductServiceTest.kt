@@ -163,7 +163,7 @@ class ProductServiceTest : BehaviorSpec({
             Then("예외가 발생해야 한다.") {
                 shouldThrow<IllegalStateException> {
                     productService.deleteProduct(1L)
-                }.message shouldBe "상품이 한 개인 경우는 삭제할 수 없습니다."
+                }.message shouldBe "해당 브랜드의 카테고리에 상품이 한 개인 경우는 삭제할 수 없습니다."
             }
         }
     }
