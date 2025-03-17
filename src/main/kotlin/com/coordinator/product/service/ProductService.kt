@@ -28,7 +28,7 @@ class ProductService(
         require(brandService.existsById(brandId = product.brandId)) { "${product.brandId}: 해당 브랜드를 찾을 수 없습니다." }
 
         return productRepository.save(product)
-            .also { productCache.updateCache(product) }
+            .also { productCache.updateCache(product) } // 새로운 상품 등록 시 캐시 업데이트
     }
 
     @Transactional(readOnly = true)
@@ -45,7 +45,7 @@ class ProductService(
             ?: throw EntityNotFoundException("productId - $productId: 해당 상품을 찾을 수 없습니다.")
 
         return productRepository.save(product)
-            .also { productCache.updateCache(product) }
+            .also { productCache.updateCache(product) } // 기존 상품 수정 시 캐시 업데이트
     }
 
     @Transactional
@@ -57,7 +57,7 @@ class ProductService(
         check(productCount > 1) { "해당 브랜드의 카테고리에 상품이 한 개인 경우는 삭제할 수 없습니다." } // 상품 품절은 없다고 가정
 
         productRepository.delete(product)
-            .also { productCache.deleteCache(product) }
+            .also { productCache.deleteCache(product) } // 상품 삭제 시 캐시 제거
     }
 
     @Transactional(readOnly = true)
